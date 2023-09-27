@@ -14,16 +14,11 @@ import imutils
 from shape_detector import ShapeDetector
 import argparse
 
-# construct the argument parse and parse the arguments
-#ap = argparse.ArgumentParser()
-#ap.add_argument("-i", "--image", required=True, help="resources/shapes.png")
-#args = vars(ap.parse_args())
-
-# read the image and resize it to a smaller factor so that the shapes can be approximated better
+# read the image 
 image = cv2.imread('resources/shapes.png')
 
 
-# convert the resized image to grayscale, blur it slightly and threshold it
+# convert the image to grayscale, blur it slightly and threshold it
 gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
 thresh = cv2.threshold(blurred_image, 60, 255, cv2.THRESH_BINARY)[1]
@@ -33,6 +28,10 @@ cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPL
 cnts = imutils.grab_contours(cnts)
 shape_detector = ShapeDetector()
 
+# initialize lists to store the centroids and the colors
+centroids = []
+colors = []
+
 # loop over the contours
 for c in cnts:
     # compute the center of the contour, then detect the name of the shape using only the contour
@@ -41,12 +40,26 @@ for c in cnts:
     cY = int((M["m01"] / M["m00"]))
     shape = shape_detector.detect(c)
 
-    # multiply the contour (x, y)-coordinates by the resize ratio, then draw the contours and the name of the shape on the image
-    c = c.astype("float")
-    c = c.astype("int")
+    # append the centroid coordinates to the list
+    centroids.append((cX, cY))
+
+    # append the color to the list
+    color = image[cY, cX]
+    colors.append(color)
+
+    # draw the contours and the name of the shape on the image
     cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
     cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
     # show the output image
     cv2.imshow("Image", image)
+
+# Print the color at each centroid
+for i, color in enumerate(colors):
+    print(f"Color at Centroid {i+1} (B, G, R):", color)
+
+# Print the centroid coordinates for all shapes
+for i, centroid in enumerate(centroids):
+    print(f"Centroid {i+1} (x, y):", centroid)
+
 cv2.waitKey(0)
