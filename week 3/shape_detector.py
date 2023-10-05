@@ -31,6 +31,10 @@ class ShapeDetector:
         # if the shape is a pentagon, it will have 5 vertices
         elif len(approx) == 5:
             shape = 'pentagon'
+        
+        # if the shape is a hexagon, it will have 6 vertices
+        elif len(approx) == 6:
+            shape = 'hexagon'
 
         # otherwise, we assume the shape is a circle
         else:
