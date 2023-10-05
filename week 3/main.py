@@ -42,6 +42,7 @@ for c in cnts:
 
     # append the centroid coordinates to the list
     centroids.append((cX, cY))
+    cv2.circle(image, (cX,cY), 5, (155, 155, 155), -1)
 
     # append the color to the list
     color = image[cY, cX]
@@ -49,7 +50,7 @@ for c in cnts:
 
     # draw the contours and the name of the shape on the image
     cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
-    cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+    cv2.putText(image, shape, (cX+10, cY), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
     # show the output image
     cv2.imshow("Image", image)
@@ -58,8 +59,9 @@ for c in cnts:
 for i, color in enumerate(colors):
     print(f"Color at Centroid {i+1} (B, G, R):", color)
 
-# Print the centroid coordinates for all shapes
+# Print the centroid coordinates for all shapes and draw a white circle at each centroid
 for i, centroid in enumerate(centroids):
     print(f"Centroid {i+1} (x, y):", centroid)
+    
 
 cv2.waitKey(0)
